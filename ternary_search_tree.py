@@ -192,14 +192,6 @@ class TernarySearchTree:
 
         if node is None:
             return []
-        elif node._eq:
-            # keep recursing into middle children as long as there is one
-            # return all words that contain the prefix
-            return node._eq._all_strings(prefix)
-        elif node.flag_wordend:
-            return [prefix]
-        else:
-            return node
         
         # if we search for exact word
         if exact:
@@ -207,9 +199,9 @@ class TernarySearchTree:
                 return [prefix]
             else:
                 return []
-        
+
         # if we search for a prefix
-        if not exact and node is not None: 
+        elif not exact: 
             if node._eq:
                 # keep recursing into middle children as long as there is one
                 # return all words that contain the prefix
