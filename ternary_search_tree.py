@@ -111,6 +111,7 @@ class TtreeNode:
         return string
     
     def _psearch(self, string):
+        """given a node and a prefix string, search Tree for its existence"""
         self.string = string
         #print(self._char)
 
@@ -129,15 +130,25 @@ class TtreeNode:
                 return self
             elif len(string) > 1:
                 if self._eq is not None:
+                    #print('found new path?')
                     return self._eq._psearch(rest)
+                else:
+                    #print('correctly found last word node')
+                    return None
 
         elif char < self._char:
             if self._lt is not None:
                 return self._lt._psearch(string)
+            else:
+                return None
 
         elif char > self._char:
             if self._gt is not None:
                 return self._gt._psearch(string)
+            else:
+                return None
+        
+        print("no condition matched yet: now return none")
 
 
 class TernarySearchTree:
@@ -172,18 +183,30 @@ class TernarySearchTree:
         self._root._insert(string)
 
 
-    def search(self, prefix):
+
+    def search(self, prefix, exact=False):
         if self._root is None:
             return False
+        
         node = self._root._psearch(prefix)
-        #print(node)
+
         if node is None:
             return []
-        elif node._eq:
-            # keep recursing into middle children as long as there is one
-            # return all words that contain the prefix
-            return node._eq._all_strings(prefix)
-        elif node.flag_wordend:
-            return [prefix]
-        else:
-            return node
+        
+        # if we search for exact word
+        if exact:
+            if node.flag_wordend:
+                return [prefix]
+            else:
+                return []
+        
+        # if we search for a prefix
+        if not exact and node is not None: 
+            if node._eq:
+                # keep recursing into middle children as long as there is one
+                # return all words that contain the prefix
+                return node._eq._all_strings(prefix)
+            elif node.flag_wordend:
+                return [prefix]
+            else:
+                return node
