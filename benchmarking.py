@@ -1,3 +1,8 @@
+"""
+benchmark_tst.py
+
+This script benchmarks the performance of a Ternary Search Tree (TST) in terms of insert and search time, across increasing tree sizes. It also compares TST performance to Python's built-in set().
+"""
 import random
 import time
 import matplotlib.pyplot as plt
@@ -147,3 +152,26 @@ plt.bar(['Set Search', 'TST Search'], [set_search_time, tst_search_time], color=
 plt.title("Search Time: Python Set vs TST")
 plt.ylabel("Time (ms)")
 plt.savefig("search_comparison.png")
+
+"""
+------------------------------------------------------------------------------------------
+Q6: Best, Average, and Worst Case Scenarios
+------------------------------------------------------------------------------------------
+
+Best Case:
+- Tree is perfectly balanced, or words inserted in an order that keeps it balanced (e.g., median-first strategy).
+- Insert/Search is O(L), fast traversal with minimal branching.
+
+Average Case:
+- Inserting words in random order (as done here) simulates a reasonably balanced tree.
+- Insert/Search around O(L * log n).
+
+Worst Case:
+- Words are inserted in sorted or reverse sorted order.
+- Tree becomes unbalanced and resembles a linked list.
+- Insert/Search degrades to O(L * n).
+
+In this benchmark:
+- We use random word samples to approximate average-case performance.
+- Best and worst-case scenarios are not explicitly simulated but could be tested by sorting the word list before insertion.
+"""
