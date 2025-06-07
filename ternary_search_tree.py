@@ -210,3 +210,35 @@ class TernarySearchTree:
                 return [prefix]
             else:
                 return node
+"""
+------------------------------------------------------------------------------------------
+Q4: Time and Space Complexity of Ternary Search Tree (TST)
+------------------------------------------------------------------------------------------
+
+Time Complexity (n = number of words, L = average word length):
+
+- Insertion:
+    - Worst Case: O(L * n) → if the tree becomes unbalanced (like a linked list)
+    - Average Case: O(L * log n) → assuming a roughly balanced ternary tree
+    - Best Case: O(L) → for inserting words into an optimally balanced TST
+
+- Search:
+    - Worst Case: O(L * n) → in a degenerate (unbalanced) tree
+    - Average Case: O(L * log n)
+    - Best Case: O(L)
+
+- Prefix Search:
+    - TST supports prefix search naturally and efficiently in O(L) time (to find prefix) + O(k) to collect matching strings.
+
+Space Complexity:
+
+- O(n * L), where:
+    - n = number of distinct words
+    - L = average length of each word
+    - Each character may be stored in a separate node, but space is reused for common prefixes.
+- Additional memory for three pointers (left, mid, right) per node.
+
+Comparison:
+- Python's set() has O(1) average insert and search time using hash tables, but does not support prefix search.
+- TST trades off speed for space efficiency and support for prefix queries.
+"""
