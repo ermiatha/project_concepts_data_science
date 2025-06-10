@@ -189,6 +189,17 @@ class TernarySearchTree:
         self._root._insert(string)
 
 
+    def prefix_search(self, node: TtreeNode, prefix):
+        """helper function for searching all words with given prefix"""
+        results = []
+        if node._eq:
+            # keep recursing into middle children as long as there is one
+            # return all words that contain the prefix
+            return node._eq._all_strings(prefix)
+        elif node.flag_wordend:
+            results.append(prefix)
+        else:
+            return results
 
     def search(self, prefix, exact=False):
         """method to search for words or prefixes"""
@@ -196,7 +207,6 @@ class TernarySearchTree:
             return False
         
         node = self._root._psearch(prefix)
-
         if node is None:
             return []
         
@@ -208,16 +218,9 @@ class TernarySearchTree:
                 return []
 
         # if we search for a prefix
-        elif not exact: 
-            if node._eq:
-                # keep recursing into middle children as long as there is one
-                # return all words that contain the prefix
-                return node._eq._all_strings(prefix)
-            elif node.flag_wordend:
-                return [prefix]
-            else:
-                return node
-
+        elif not exact:
+            #print('now in prefix search mode')
+            return self.prefix_search(node, prefix)
 
 """
 ------------------------------------------------------------------------------------------
