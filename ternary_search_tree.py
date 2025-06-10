@@ -5,12 +5,13 @@ words in a Ternary Search Tree framework"""
 class TtreeNode:
     """A class for node objects belonging to a Ternary Search Tree"""
     
-    def __init__(self, char):
+    def __init__(self, char: str):
         self.root = None
         self.string = None
-        self._char = char[0]  # value already stored in node x, store as attribute of this node
+        self._char = char  # value already stored in node x, store as attribute of this node
         self._lt, self._gt, self._eq = None, None, None
         self.flag_wordend = False  # mark the end of a word
+        self.flag_empty = False
 
     def _all_strings(self, pf=''):
         #print(f'printing {self} with prefix {pf}')
@@ -36,6 +37,7 @@ class TtreeNode:
 
         return final_wordlist
     
+
     def __len__(self):
         # should count keys, not nodes
         if self.flag_wordend:
@@ -47,11 +49,11 @@ class TtreeNode:
         #     length += 1
 
         if self._eq is not None:
-                length += len(self._eq)
+            length += len(self._eq)
         if self._lt is not None:
-                length += len(self._lt)
+            length += len(self._lt)
         if self._gt is not None:
-                length += len(self._gt)
+            length += len(self._gt)
         
         return length
 
@@ -75,15 +77,19 @@ class TtreeNode:
     def _insert(self, string):
         #print(f'inserting {string} at node {self._char}')
         # string is the new key to insert
-        # self.string is the value already stored in this node,  holds the current key in this node
         self.string = string  # only the first time the function is called -> add flag as function argument
         
         if len(string) > 0:
             char = string[0]  # first character of new word
             rest = string[1::]  # if rest as list: char, *rest = string
         else:
-            char = string
-            rest = string
+            print(f'this is an empty string')
+            #char = string
+            #rest = string
+            self.flag_empty = True
+            self.flag_wordend = True
+            return 
+
 
         # if string contains more than one character
         if len(string) > 1:
@@ -105,10 +111,6 @@ class TtreeNode:
                 if self._gt is None:
                     self._gt = TtreeNode(char)
                 self._gt._insert(string)
-        #elif string == "":
-        #    if self._eq is None:
-        #        self._eq = TtreeNode(string)
-        #    self._eq._insert(string)
         else:
             self.flag_wordend = True
         
@@ -162,6 +164,7 @@ class TernarySearchTree:
     def __init__(self):
         self._root = None
 
+
     def all_strings(self):
         if self._root is None:
             return []
@@ -185,7 +188,14 @@ class TernarySearchTree:
     def insert(self, string):
         if self._root is None:
             #print(f'inserting {string} at node {self._root}')
-            self._root = TtreeNode(string)
+            if string == "":
+                # add dummy character
+                print(f'start ttree with empty string')
+                self._root = TtreeNode("*")
+                self._root.flag_empty = True
+                return
+            else:
+                self._root = TtreeNode(string)
         self._root._insert(string)
 
 
@@ -221,6 +231,7 @@ class TernarySearchTree:
         elif not exact:
             #print('now in prefix search mode')
             return self.prefix_search(node, prefix)
+
 
 """
 ------------------------------------------------------------------------------------------
