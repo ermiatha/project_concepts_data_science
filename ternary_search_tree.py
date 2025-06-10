@@ -1,9 +1,13 @@
+"""Two classes, TtreeNode and TernarySearchTree to allow inserting and searching
+words in a Ternary Search Tree framework"""
+
+
 class TtreeNode:
+    """A class for node objects belonging to a Ternary Search Tree"""
     
     def __init__(self, char):
         self.root = None
         self.string = None
-        #self._word = char  # to store in list of all words?
         self._char = char[0]  # value already stored in node x, store as attribute of this node
         self._lt, self._gt, self._eq = None, None, None
         self.flag_wordend = False  # mark the end of a word
@@ -109,7 +113,8 @@ class TtreeNode:
             self.flag_wordend = True
         
         return string
-    
+
+
     def _psearch(self, string):
         """given a node and a prefix string, search Tree for its existence"""
         self.string = string
@@ -152,6 +157,7 @@ class TtreeNode:
 
 
 class TernarySearchTree:
+    """A class for a Ternary Search Tree object"""
     
     def __init__(self):
         self._root = None
@@ -168,14 +174,14 @@ class TernarySearchTree:
             return 0
         else:
             return len(self._root)
-    
+
     def __repr__(self):
         if self._root is None:
             return 'empty tree'
         else:
             #print("print string here")
             return self._root._to_string('')
-    
+
     def insert(self, string):
         if self._root is None:
             #print(f'inserting {string} at node {self._root}')
@@ -196,6 +202,7 @@ class TernarySearchTree:
             return results
 
     def search(self, prefix, exact=False):
+        """method to search for words or prefixes"""
         if self._root is None:
             return False
         
