@@ -25,6 +25,7 @@ class TtreeNode:
             final_wordlist.append("")
 
         if self.flag_wordend:
+            print(f'word {word} will be added to result list')
             #print(f"this word has flag wordend: {word}")
             #print("empty string has flag wordend")
             final_wordlist.append(word)
@@ -46,23 +47,7 @@ class TtreeNode:
     
 
     def __len__(self):
-        # should count keys, not nodes
-        if self.flag_wordend:
-            length = 1
-        else:
-            length = 0
-        # add edge case if string is empty
-        # if self._char == "":
-        #     length += 1
-
-        if self._eq is not None:
-            length += len(self._eq)
-        if self._lt is not None:
-            length += len(self._lt)
-        if self._gt is not None:
-            length += len(self._gt)
-        #print(f'just use list of all strings: has length {len(self._all_strings())}')
-        #return length
+        """return length of search tree as number of inserted strings"""
         return len(self._all_strings())
 
     def _to_string(self, indent=' '):
