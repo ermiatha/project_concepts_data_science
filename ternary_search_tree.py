@@ -19,18 +19,25 @@ class TtreeNode:
         
         word = pf + self._char
 
+
         # missing: if prefix empty, add it as word
+        if self.flag_empty:
+            final_wordlist.append("")
 
         if self.flag_wordend:
+            #print(f"this word has flag wordend: {word}")
+            #print("empty string has flag wordend")
             final_wordlist.append(word)
 
         if self._lt is not None:
             #print(self._lt)
             final_wordlist.extend(self._lt._all_strings(pf))
         if self._gt is not None:
+            #print(f"empty string in greater than? word: {word}")
             #print(self._gt)
             final_wordlist.extend(self._gt._all_strings(pf))
         if self._eq is not None:
+            #print(f"empty string in equal? word: {word}")
             #print(self._eq)
             words = self._eq._all_strings(word)
             final_wordlist.extend(words)
@@ -54,8 +61,9 @@ class TtreeNode:
             length += len(self._lt)
         if self._gt is not None:
             length += len(self._gt)
-        
-        return length
+        #print(f'just use list of all strings: has length {len(self._all_strings())}')
+        #return length
+        return len(self._all_strings())
 
     def _to_string(self, indent=' '):
         terminates = f'Terminates: {self.flag_wordend}'
@@ -87,8 +95,8 @@ class TtreeNode:
             #char = string
             #rest = string
             self.flag_empty = True
-            self.flag_wordend = True
-            return 
+            #self.flag_wordend = True
+            return # return nothing
 
 
         # if string contains more than one character
@@ -190,7 +198,7 @@ class TernarySearchTree:
             #print(f'inserting {string} at node {self._root}')
             if string == "":
                 # add dummy character
-                print(f'start ttree with empty string')
+                #print(f'start ttree with empty string')
                 self._root = TtreeNode("*")
                 self._root.flag_empty = True
                 return
