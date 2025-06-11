@@ -19,18 +19,19 @@ class TtreeNode:
         
         word = pf + self._char
 
-
         # missing: if prefix empty, add it as word
         if self.flag_empty:
+            #print("empty string")
             final_wordlist.append("")
 
         if self.flag_wordend:
-            print(f'word {word} will be added to result list')
+            #print(f'word {word} will be added to result list')
             #print(f"this word has flag wordend: {word}")
             #print("empty string has flag wordend")
             final_wordlist.append(word)
 
         if self._lt is not None:
+            #print(f"empty string in less than? word: {word}")
             #print(self._lt)
             final_wordlist.extend(self._lt._all_strings(pf))
         if self._gt is not None:
@@ -68,47 +69,37 @@ class TtreeNode:
         return f"{self._char}{'*' if self.flag_wordend else ''}"
     
     def _insert(self, string):
-        #print(f'inserting {string} at node {self._char}')
-        # string is the new key to insert
-        self.string = string  # only the first time the function is called -> add flag as function argument
-        
-        if len(string) > 0:
-            char = string[0]  # first character of new word
-            rest = string[1::]  # if rest as list: char, *rest = string
-        else:
-            print(f'this is an empty string')
+        """Recursive function to save characters from inserted words as ttree nodes"""
+
+        # handle empty string case
+        if len(string) == 0:
+            #print(f'this is an empty string')
             #char = string
             #rest = string
             self.flag_empty = True
-            #self.flag_wordend = True
-            return # return nothing
+            #return # return nothing
 
-
-        # if string contains more than one character
-        if len(string) > 1:
-            # character matches
-            if char == self._char:
-
-            # insert in middle child
-                if self._eq is None:
-                    self._eq = TtreeNode(rest[0])
-                self._eq._insert(rest)
-
-            # if earlier in the alphabet:
-            elif char < self._char:
+        else: 
+            char = string[0]
+            if char < self._char:
                 if self._lt is None:
                     self._lt = TtreeNode(char)
-                self._lt._insert(string)
-            # if later in the alphabet
+                self._lt._insert(string)  # always recurse
+
             elif char > self._char:
                 if self._gt is None:
                     self._gt = TtreeNode(char)
-                self._gt._insert(string)
-        else:
-            self.flag_wordend = True
-        
-        return string
+                self._gt._insert(string)  # always recurse
 
+            else:  # char == self._char
+                if len(string) == 1:
+                    self.flag_wordend = True
+                else:
+                    next_char = string[1]
+                    if self._eq is None:
+                        self._eq = TtreeNode(next_char)
+                    self._eq._insert(string[1:])
+   
 
     def _psearch(self, string):
         """given a node and a prefix string, search Tree for its existence"""
@@ -122,11 +113,12 @@ class TtreeNode:
             char = string
             rest = string
         
-        print(f'searching for char {char} at node {self._char}')
+        #print(f'searching for char {char} at node {self._char}')
 
         # if character is found:
         if char == self._char:
             if len(string) == 1:
+                #print("now returning self")
                 return self
             elif len(string) > 1:
                 if self._eq is not None:
@@ -148,7 +140,6 @@ class TtreeNode:
             else:
                 return None
         
-        print("no condition matched yet: now return none")
 
 
 class TernarySearchTree:
@@ -165,7 +156,7 @@ class TernarySearchTree:
             return self._root._all_strings()
         
     def __len__(self):
-        print(f'printing length of {self._root}')
+        #print(f'printing length of {self._root}')
         if self._root is None:
             return 0
         else:
@@ -188,42 +179,60 @@ class TernarySearchTree:
                 self._root.flag_empty = True
                 return
             else:
-                self._root = TtreeNode(string)
+                self._root = TtreeNode(string[0])
         self._root._insert(string)
+        #else:
+        #    self._root._insert(string)
 
 
     def prefix_search(self, node: TtreeNode, prefix):
         """helper function for searching all words with given prefix"""
-        results = []
         if node._eq:
             # keep recursing into middle children as long as there is one
             # return all words that contain the prefix
-            return node._eq._all_strings(prefix)
+            wordlist = node._eq._all_strings(prefix)
         elif node.flag_wordend:
-            results.append(prefix)
+            wordlist = [prefix]
         else:
-            return results
+            wordlist = []
+        return wordlist
+        
+
 
     def search(self, prefix, exact=False):
         """method to search for words or prefixes"""
         if self._root is None:
             return False
         
+        if prefix == "":
+            if self._root.flag_empty and exact:
+                return True
+                #print("empty string flag")
+        
         node = self._root._psearch(prefix)
+        #print(f'result from psearch is: {node}')
+        if prefix == "" and not exact:
+            return True
+        
         if node is None:
-            return []
+            return False
         
         # if we search for exact word
         if exact:
+
             if node.flag_wordend:
-                return [prefix]
+                return True
             else:
-                return []
+                return False
 
         # if we search for a prefix
         elif not exact:
             #print('now in prefix search mode')
-            return self.prefix_search(node, prefix)
+            wordlist = self.prefix_search(node, prefix)
+            if wordlist:
+                return True
+            return False
+
 
 
 """
