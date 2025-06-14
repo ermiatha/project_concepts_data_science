@@ -1,6 +1,6 @@
-# Project concept data science
+# Project in 'Concepts of Data Ccience': A Ternary Search Tree Implementation
 
-This repository contains the implementation of a ternary course tree in the concept of data science course at UHasselt. 
+This repository contains the implementation, testing and benchmarking of a Ternary Search Tree in the 'Concepts of Data Science' course at UHasselt. 
 The students are Luong Vuong (2365900) and Ermioni Athanasiadi (2365990)
 
 ## Project Structure
