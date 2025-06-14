@@ -61,7 +61,7 @@ plt.title("TST Insert Performance")
 plt.xlabel("Number of words in TST")
 plt.ylabel("Insert time for 20 words (ms)")
 plt.grid(True)
-plt.savefig("insert_tst.png")
+plt.savefig("results/insert_tst.png")
 
 
 # -------------------------------
@@ -100,7 +100,7 @@ plt.title("TST Search Performance")
 plt.xlabel("Number of words in TST")
 plt.ylabel("Search time for 20 words (ms)")
 plt.grid(True)
-plt.savefig("search_tst.png")
+plt.savefig("results/search_tst.png")
 
 
 # -------------------------------
@@ -145,13 +145,13 @@ plt.figure()
 plt.bar(['Set Insert', 'TST Insert'], [set_insert_time, tst_insert_time], color=['blue', 'orange'])
 plt.title("Insert Time: Python Set vs TST")
 plt.ylabel("Time (ms)")
-plt.savefig("insert_comparison.png")
+plt.savefig("results/insert_comparison.png")
 
 plt.figure()
 plt.bar(['Set Search', 'TST Search'], [set_search_time, tst_search_time], color=['blue', 'orange'])
 plt.title("Search Time: Python Set vs TST")
 plt.ylabel("Time (ms)")
-plt.savefig("search_comparison.png")
+plt.savefig("results/search_comparison.png")
 
 """
 ------------------------------------------------------------------------------------------
