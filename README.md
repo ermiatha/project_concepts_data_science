@@ -31,13 +31,67 @@ The students are Luong Vuong (2365900) and Ermioni Athanasiadi (2365990)
 └── README.md # project documentation
 ```
 
-## What is it?
+
+---
+
+## What is included?
+- A recursive Ternary Search Tree implementation
+- Support for string insertion, exact match, prefix-based search and all-strings retrieval
+- Benchmarking results with summary and visualizations
+- SLURM-compatibility for HPC environments
 
 1. `benchmarking.py`: Python script for benchmarking.
-1. `ternary_search_tree.ipynb`: Jupyter notebook for implementing the ternary search tree
-1. `ternary_search_tree.py`: Python script for Ttreenode and TernarySearchTree classes
+2. `ternary_search_tree.ipynb`: Jupyter notebook for implementing the ternary search tree
+3. `ternary_search_tree.py`: Python script for Ttreenode and TernarySearchTree classes
 
-## Add: Explanation of how to work with the Ternary search Tree
+---
+
+## Quick Start
+
+### Installation
+
+You need Python and Jupyter Notebook. You can install further dependencies with:
+
+```bash
+pip install numpy matplotlib random time
+```
+
+### Example Usage
+```python
+from ternary_search_tree import TernarySearchTree
+
+tst = TernarySearchTree()
+
+# insert words into the tree
+words = ["cat", "car", "cart", "care", "fly", ""]
+
+for word in words:
+    tst.insert(word)
+
+# search for an exact match
+print(tst.search("cat", exact=True))    # True
+print(tst.search("cats", exact=True))   # False
+
+# prefix search
+print(tst.search("ca"))                 # True (matches 'cat', 'car', 'cart', 'care')
+
+# search for empty string
+print(tst.search("", exact=True))       # True because inserted
+print(tst.search(""))                   # always True because "" is prefix of all strings
+
+# Get all inserted strings
+print(tst.all_strings())                # ['', 'fly', 'cat', 'car', 'cart', 'care']
+```
+
+### How to Run Benchmarks
+#### Locally
+```bash
+python benchmarking.py
+```
+#### On HPC (SLURM)
+```bash
+sbatch benchmarking.slurm
+```
 
 ## Conclusion summary
 - 
