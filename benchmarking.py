@@ -1,4 +1,5 @@
 """
+
 benchmark_tst.py
 
 This script benchmarks the performance of a Ternary Search Tree (TST) in terms of insert and search time, across increasing tree sizes. It also compares TST performance to Python's built-in set().
@@ -28,7 +29,7 @@ words[:20]
 # BENCHMARK PARAMETERS
 # -------------------------------
 sizes = [100, 500, 1_000, 5_000, 10_000, 20_000, 30_000, 40_000, 50_000]  # Sizes of trees to build
-nr_runs = 300  # Number of benchmark runs to average timing results
+nr_runs = 10  # Number of benchmark runs to average timing results
 
 # create a list of random samples for each size
 samples = [
@@ -44,16 +45,20 @@ insert_times = {}
 
 # Benchmark insert performance as tree size increases
 for sample in samples:
-    tst = TernarySearchTree()
+    #tst = TernarySearchTree()
 
     # First, build the tree with the sample size
-    for word in sample:
-        tst.insert(word)
+    #for word in sample:
+    #    tst.insert(word)
 
     insert_times[len(sample)] = 0.0
 
     # Measure the time to insert 20 new words (multiple runs for averaging)
     for _ in range(nr_runs):
+        tst = TernarySearchTree()
+        for word in sample:
+            tst.insert(word)
+
         start_time = time.time_ns()
         for word in insert_sample:
             tst.insert(word)
