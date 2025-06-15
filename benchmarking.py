@@ -172,66 +172,96 @@ worst_insert_times = {}
 best_search_times = {}
 worst_search_times = {}
 
-for size in sizes:
-    # --- BEST CASE: Insert median-first order (balanced insertion) ---
-    def median_first_order(words):
-        if not words:
-            return []
-        mid = len(words) // 2
-        return [words[mid]] + median_first_order(words[:mid]) + median_first_order(words[mid+1:])
+def median_first_order(words):
+    if not words:
+        return []
+    mid = len(words) // 2
+    return [words[mid]] + median_first_order(words[:mid]) + median_first_order(words[mid+1:])
 
+for size in sizes:
+    # ------------------------------------------
+    # BEST CASE: Balanced (median-first insertion)
+    # ------------------------------------------
     sorted_sample = sorted(random.sample(words, k=size))
     best_ordered_sample = median_first_order(sorted_sample)
 
-    # Insert benchmark for best case (averaged)
+    # Insert benchmark
     best_insert_times[size] = 0.0
     for _ in range(nr_runs):
-        tst_best = TernarySearchTree()
-        start_time = time.time_ns()
+        tst = TernarySearchTree()
+        start = time.time_ns()
         for word in best_ordered_sample:
-            tst_best.insert(word)
-        end_time = time.time_ns()
-        best_insert_times[size] += (end_time - start_time)
-    best_insert_times[size] /= nr_runs * 1_000_000.0  # Convert to ms
+            tst.insert(word)
+        end = time.time_ns()
+        best_insert_times[size] += (end - start)
+    best_insert_times[size] /= nr_runs * 1_000_000.0
 
-    # Search benchmark for best case
+    # Search benchmark (same 20 words from tree)
     best_search_times[size] = 0.0
-    tst_best = TernarySearchTree()
-    for word in best_ordered_sample:
-        tst_best.insert(word)
     for _ in range(nr_runs):
+        tst = TernarySearchTree()
+        for word in best_ordered_sample:
+            tst.insert(word)
         search_words = random.sample(best_ordered_sample, k=20)
         start = time.time_ns()
         for word in search_words:
-            tst_best.search(word)
+            tst.search(word)
         end = time.time_ns()
         best_search_times[size] += (end - start)
     best_search_times[size] /= nr_runs * 1_000_000.0
 
-    # --- WORST CASE: Insert sorted order (degenerated to linked list) ---
+    # ------------------------------------------
+    # AVERAGE CASE: Random insertion
+    # ------------------------------------------
+    avg_sample = random.sample(words, k=size)
+
+    insert_times[size] = 0.0
+    for _ in range(nr_runs):
+        tst = TernarySearchTree()
+        start = time.time_ns()
+        for word in avg_sample:
+            tst.insert(word)
+        end = time.time_ns()
+        insert_times[size] += (end - start)
+    insert_times[size] /= nr_runs * 1_000_000.0
+
+    search_times[size] = 0.0
+    for _ in range(nr_runs):
+        tst = TernarySearchTree()
+        for word in avg_sample:
+            tst.insert(word)
+        search_words = random.sample(avg_sample, k=20)
+        start = time.time_ns()
+        for word in search_words:
+            tst.search(word)
+        end = time.time_ns()
+        search_times[size] += (end - start)
+    search_times[size] /= nr_runs * 1_000_000.0
+
+    # ------------------------------------------
+    # WORST CASE: Sorted insertion (degenerate tree)
+    # ------------------------------------------
     worst_ordered_sample = sorted(random.sample(words, k=size))
 
-    # Insert benchmark for worst case (averaged)
     worst_insert_times[size] = 0.0
     for _ in range(nr_runs):
-        tst_worst = TernarySearchTree()
-        start_time = time.time_ns()
+        tst = TernarySearchTree()
+        start = time.time_ns()
         for word in worst_ordered_sample:
-            tst_worst.insert(word)
-        end_time = time.time_ns()
-        worst_insert_times[size] += (end_time - start_time)
-    worst_insert_times[size] /= nr_runs * 1_000_000.0  # Convert to ms
+            tst.insert(word)
+        end = time.time_ns()
+        worst_insert_times[size] += (end - start)
+    worst_insert_times[size] /= nr_runs * 1_000_000.0
 
-    # Search benchmark for worst case
     worst_search_times[size] = 0.0
-    tst_worst = TernarySearchTree()
-    for word in worst_ordered_sample:
-        tst_worst.insert(word)
     for _ in range(nr_runs):
+        tst = TernarySearchTree()
+        for word in worst_ordered_sample:
+            tst.insert(word)
         search_words = random.sample(worst_ordered_sample, k=20)
         start = time.time_ns()
         for word in search_words:
-            tst_worst.search(word)
+            tst.search(word)
         end = time.time_ns()
         worst_search_times[size] += (end - start)
     worst_search_times[size] /= nr_runs * 1_000_000.0
