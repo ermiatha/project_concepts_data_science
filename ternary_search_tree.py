@@ -3,44 +3,46 @@ words in a Ternary Search Tree framework"""
 
 
 class TtreeNode:
-    """A class for node objects belonging to a Ternary Search Tree"""
+    """A class for node objects belonging to a Ternary Search Tree
+    Methods
+    ----------
+    all_strings : print all strings contained in the TST
+    __len__     : return number of strings in the TST
+    _to_string  :
+    __repr__    : formatted string representation of TST
+    _insert     : insert a string into the TST
+    _psearch    : search TST for given prefix
+    """
     
     def __init__(self, char: str):
         self.root = None
         self.string = None
         self._char = char  # value already stored in node x, store as attribute of this node
-        self._lt, self._gt, self._eq = None, None, None
+        self._lt, self._gt, self._eq = None, None, None  # less, equal, greater children
         self.flag_wordend = False  # mark the end of a word
-        self.flag_empty = False
+        self.flag_empty = False  # mark empty string
 
     def _all_strings(self, pf=''):
-        #print(f'printing {self} with prefix {pf}')
+
         final_wordlist = []
         
         word = pf + self._char
 
-        # missing: if prefix empty, add it as word
+        # if empty string was inserted: add to list
         if self.flag_empty:
-            #print("empty string")
             final_wordlist.append("")
 
+        # if word was found: add to list
         if self.flag_wordend:
-            #print(f'word {word} will be added to result list')
-            #print(f"this word has flag wordend: {word}")
-            #print("empty string has flag wordend")
             final_wordlist.append(word)
 
+        # traverse tree as long as children exist and no word end was found
         if self._lt is not None:
-            #print(f"empty string in less than? word: {word}")
-            #print(self._lt)
             final_wordlist.extend(self._lt._all_strings(pf))
         if self._gt is not None:
-            #print(f"empty string in greater than? word: {word}")
-            #print(self._gt)
             final_wordlist.extend(self._gt._all_strings(pf))
         if self._eq is not None:
-            #print(f"empty string in equal? word: {word}")
-            #print(self._eq)
+            # collect all words found and add to list
             words = self._eq._all_strings(word)
             final_wordlist.extend(words)
 
@@ -54,7 +56,6 @@ class TtreeNode:
     def _to_string(self, indent=' '):
         terminates = f'Terminates: {self.flag_wordend}'
         print_info = f'char: {repr(self)}, '
-        #repr_str = indent + repr(self)
         repr_str = indent + print_info + indent + terminates
         if self._eq is not None:
             repr_str += '\n' + '_eq:' + self._eq._to_string(indent + '  ')
@@ -65,21 +66,25 @@ class TtreeNode:
         return repr_str
     
     def __repr__(self):
-        # remove star later, for now just for debugging
+        # star marks the end of a word
         return f"{self._char}{'*' if self.flag_wordend else ''}"
     
     def _insert(self, string):
-        """Recursive function to save characters from inserted words as ttree nodes"""
+        """ Recursive function to save characters from inserted words as ttree nodes
+        Parameters
+        ----------
+        string : str
 
-        # handle empty string case
+        Returns
+        ----------
+        
+        """
+
+        # mark empty string case
         if len(string) == 0:
-            #print(f'this is an empty string')
-            #char = string
-            #rest = string
             self.flag_empty = True
-            #return # return nothing
 
-        else: 
+        else:
             char = string[0]
             if char < self._char:
                 if self._lt is None:
@@ -95,6 +100,8 @@ class TtreeNode:
                 if len(string) == 1:
                     self.flag_wordend = True
                 else:
+                    # if node with matched char was found:
+                    # traverse tree
                     next_char = string[1]
                     if self._eq is None:
                         self._eq = TtreeNode(next_char)
@@ -102,39 +109,45 @@ class TtreeNode:
    
 
     def _psearch(self, string):
-        """given a node and a prefix string, search Tree for its existence"""
+        """given a node and a prefix string, search TST for its existence
+        Parameters
+        ----------
+        string : str
+
+        Returns
+        ----------
+        self or None
+        """
+
         self.string = string
-        #print(self._char)
 
         if len(string) > 1:
             char = string[0]  # first character of search word
             rest = string[1::]
-        else:  # necessary?
+        else:
             char = string
             rest = string
-        
-        #print(f'searching for char {char} at node {self._char}')
 
         # if character is found:
         if char == self._char:
             if len(string) == 1:
-                #print("now returning self")
                 return self
             elif len(string) > 1:
+                # traverse tree for string rest as long as children exist
                 if self._eq is not None:
-                    #print('found new path?')
                     return self._eq._psearch(rest)
                 else:
-                    #print('correctly found last word node')
                     return None
 
         elif char < self._char:
+            # traverse tree to look for a match
             if self._lt is not None:
                 return self._lt._psearch(string)
             else:
                 return None
 
         elif char > self._char:
+            # traverse tree to look for a match
             if self._gt is not None:
                 return self._gt._psearch(string)
             else:
@@ -143,20 +156,36 @@ class TtreeNode:
 
 
 class TernarySearchTree:
-    """A class for a Ternary Search Tree object"""
+    """A class for a Ternary Search Tree object
+        Methods
+    ----------
+    all_strings    : print all strings contained in the TST
+    __len__        : return number of strings in the TST
+    __repr__       : formatted string representation of TST
+     insert        : insert a string into the TST
+    prefix_search  : return wordlist of all strings in TST for given prefix
+    search         : search for exact string or prefix in TST
+    """
     
     def __init__(self):
         self._root = None
 
 
     def all_strings(self):
+        """ return all strings stored in TST
+        Parameters
+        ----------
+        
+        Returns
+        ----------
+        List
+        """
         if self._root is None:
             return []
         else:
             return self._root._all_strings()
         
     def __len__(self):
-        #print(f'printing length of {self._root}')
         if self._root is None:
             return 0
         else:
@@ -166,27 +195,42 @@ class TernarySearchTree:
         if self._root is None:
             return 'empty tree'
         else:
-            #print("print string here")
             return self._root._to_string('')
 
     def insert(self, string):
+        """ insert a string into TST
+        Parameters
+        ----------
+        string : str
+
+        Returns
+        ----------
+        List
+        """
         if self._root is None:
-            #print(f'inserting {string} at node {self._root}')
+            # if empty string inserted: mark tree as non-empty
             if string == "":
-                # add dummy character
-                #print(f'start ttree with empty string')
                 self._root = TtreeNode("*")
                 self._root.flag_empty = True
                 return
             else:
+                # initiate tree
                 self._root = TtreeNode(string[0])
+        # recursive insertion of whole string
         self._root._insert(string)
-        #else:
-        #    self._root._insert(string)
 
 
     def prefix_search(self, node: TtreeNode, prefix):
-        """helper function for searching all words with given prefix"""
+        """ helper function for searching all words with given prefix
+        Parameters
+        ----------
+        node    : TtreeNode
+        prefix  : str
+        
+        Returns
+        ----------
+        List
+        """
         if node._eq:
             # keep recursing into middle children as long as there is one
             # return all words that contain the prefix
@@ -200,70 +244,47 @@ class TernarySearchTree:
 
 
     def search(self, prefix, exact=False):
-        """method to search for words or prefixes"""
+        """ method to search for words or prefixes
+        Parameters
+        ----------
+        prefix  : str
+        exact   : bool
+        
+        Returns
+        ----------
+        Boolean
+        """
+        # False if TST empty
         if self._root is None:
             return False
         
+        # empty string is always a prefix
         if prefix == "":
             if self._root.flag_empty and exact:
                 return True
-                #print("empty string flag")
         
+        # traverse tree to search prefix
         node = self._root._psearch(prefix)
-        #print(f'result from psearch is: {node}')
+        # true if the empty prefix was inserted
         if prefix == "" and not exact:
             return True
         
+        # prefix not found in tree
         if node is None:
             return False
         
-        # if we search for exact word
+        ## Exact string search ##
         if exact:
-
             if node.flag_wordend:
                 return True
             else:
                 return False
 
-        # if we search for a prefix
+        ## Prefix string search ##
         elif not exact:
-            #print('now in prefix search mode')
+            # search for all words containing the prefix
             wordlist = self.prefix_search(node, prefix)
             if wordlist:
                 return True
             return False
 
-
-
-"""
-------------------------------------------------------------------------------------------
-Q4: Time and Space Complexity of Ternary Search Tree (TST)
-------------------------------------------------------------------------------------------
-
-Time Complexity (n = number of words, L = average word length):
-
-- Insertion:
-    - Worst Case: O(L * n) → if the tree becomes unbalanced (like a linked list)
-    - Average Case: O(L * log n) → assuming a roughly balanced ternary tree
-    - Best Case: O(L) → for inserting words into an optimally balanced TST
-
-- Search:
-    - Worst Case: O(L * n) → in a degenerate (unbalanced) tree
-    - Average Case: O(L * log n)
-    - Best Case: O(L)
-
-- Prefix Search:
-    - TST supports prefix search naturally and efficiently in O(L) time (to find prefix) + O(k) to collect matching strings.
-
-Space Complexity:
-
-- O(n * L), where:
-    - n = number of distinct words
-    - L = average length of each word
-    - Each character may be stored in a separate node, but space is reused for common prefixes.
-- Additional memory for three pointers (left, mid, right) per node.
-
-Comparison:
-- Python's set() has O(1) average insert and search time using hash tables, but does not support prefix search.
-- TST trades off speed for space efficiency and support for prefix queries.
-"""
