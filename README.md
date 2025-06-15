@@ -93,5 +93,29 @@ python benchmarking.py
 sbatch benchmarking.slurm
 ```
 
-## Conclusion summary
-- 
+## Conclusion summary: Performance and Practical Use of Ternary Search Trees (TSTs)
+Ternary Search Trees (TSTs) offer a flexible data structure for storing and and searching of strings, particularly when dealing with large sets of similar or prefix-sharing words.
+
+### Insertion Performance
+- **Scalability:** Insertion time follows a more or less linear trend with respect to the number of inserted words. No recursion errors were encountered in our benchmarks (up to 50,000 words), but such errors are expected for larger datasets due to the recursive nature of the implementation.
+- **Input Order Matters:** Insertion performance varies with input order:
+  - Random and explicitly balanced insertions show similar performance, indicating that TSTs naturally form reasonably balanced structures when words are inserted in random order.
+  - Inserting sorted word lists creates long, unbalanced branches, significantly degrading performance due to deep recursion and many redundant comparisons.
+
+### Search Performance
+- **Prefix vs. Exact Search:**
+  - Prefix-based search is flexible but requires traversing all possible continuations, which quickly becomes costly in large TST's.
+  - Exact match searches are faster, because the TST benefits from early termination, and avoids the traversal of multiple branches, unlike in prefix searches.
+- **Performance Comparison:** 
+  - Search performance is reasonable but **significantly slower** than Python’s built-in `set()` type for exact matches, which benefits from hash table optimizations.
+  - Median and random case searches behave similarly in TSTs.
+  - **Worst-case scenarios** (e.g., searching in a tree built from a sorted list) are of course more expensive, as the tree becomes very deep and all nodes along a branch may need to be visited.
+
+###  Limitations
+- The current recursive implementation limits scalability, particularly with large datasets, due to Python’s recursion depth limit.
+- TSTs were not benchmarked on datasets larger than ~50,000 words. Practical use on significantly larger datasets would request an iterative or tail-recursive implementation.
+
+### Alternatives and Trade-offs
+- **Python `set`** are highly efficient and outperformed our TST in all comparisons. They are fast for exact matches but lack built-in support for prefix queries or lexicographic traversal.
+- **Binary Search Trees (BSTs)** were not compared with TST's , but can be used for string storage and may offer better balancing with self-balancing variants (e.g., AVL, Red-Black Trees), but are less suited for prefix-based queries without extra logic.
+- **Tries (Prefix Trees)** could be an interesting option to consider for prefix lookups and often faster than TSTs in such tasks. It may be, however, that they consume more memory for sparse datasets or shorter words.
