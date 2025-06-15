@@ -15,31 +15,42 @@ from ternary_search_tree import TernarySearchTree  # Import your custom TST clas
 with open('data/search_trees/corncob_lowercase.txt') as file:
     words = [line.strip() for line in file]
 
+# Check length of words loaded
+len(words)
+
+# The words are alphabetically ordered
+words[:20]
+
 # Shuffle to ensure random distribution (avoids insertion bias)
-random.shuffle(words)
+# random.shuffle(words)
 
 # -------------------------------
 # BENCHMARK PARAMETERS
 # -------------------------------
 sizes = [100, 500, 1_000, 5_000, 10_000, 20_000, 30_000, 40_000, 50_000]  # Sizes of trees to build
-nr_runs = 10  # Number of benchmark runs to average timing results
+nr_runs = 300  # Number of benchmark runs to average timing results
+
+# create a list of random samples for each size
+samples = [
+    random.sample(words, k=size) for size in sizes
+]
 
 # -------------------------------
 # INSERTION BENCHMARK
 # -------------------------------
+# We can now time how long it takes to insert words into a Ternary Search Tree of various sizes.  First we build the TST based on the sample, and then we insert words.
 insert_sample = random.sample(words, k=20)  # Fixed 20-word sample to test insert time
 insert_times = {}
 
 # Benchmark insert performance as tree size increases
-for size in sizes:
-    sample = random.sample(words, k=size)
+for sample in samples:
     tst = TernarySearchTree()
 
     # First, build the tree with the sample size
     for word in sample:
         tst.insert(word)
 
-    insert_times[size] = 0.0
+    insert_times[len(sample)] = 0.0
 
     # Measure the time to insert 20 new words (multiple runs for averaging)
     for _ in range(nr_runs):
@@ -47,10 +58,11 @@ for size in sizes:
         for word in insert_sample:
             tst.insert(word)
         end_time = time.time_ns()
-        insert_times[size] += end_time - start_time
+        insert_times[len(sample)] += end_time - start_time
 
     # Average over number of runs and convert to milliseconds
-    insert_times[size] /= nr_runs * 1_000_000.0
+    insert_times[len(sample)] /= nr_runs * 1_000_000.0
+insert_times
 
 # -------------------------------
 # PLOT INSERTION RESULTS
