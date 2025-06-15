@@ -75,7 +75,6 @@ plt.ylabel("Insert time for 20 words (ms)")
 plt.grid(True)
 plt.savefig("results/insert_tst.png")
 
-
 # -------------------------------
 # SEARCH BENCHMARK
 # -------------------------------
@@ -113,7 +112,6 @@ plt.xlabel("Number of words in TST")
 plt.ylabel("Search time for 20 words (ms)")
 plt.grid(True)
 plt.savefig("results/search_tst.png")
-
 
 # -------------------------------
 # COMPARISON: TST vs Python Set
@@ -164,6 +162,107 @@ plt.bar(['Set Search', 'TST Search'], [set_search_time, tst_search_time], color=
 plt.title("Search Time: Python Set vs TST")
 plt.ylabel("Time (ms)")
 plt.savefig("results/search_comparison.png")
+
+# -------------------------------
+# BEST & WORST CASE INSERTION AND SEARCH (with averaging)
+# -------------------------------
+
+best_insert_times = {}
+worst_insert_times = {}
+best_search_times = {}
+worst_search_times = {}
+
+for size in sizes:
+    # --- BEST CASE: Insert median-first order (balanced insertion) ---
+    def median_first_order(words):
+        if not words:
+            return []
+        mid = len(words) // 2
+        return [words[mid]] + median_first_order(words[:mid]) + median_first_order(words[mid+1:])
+
+    sorted_sample = sorted(random.sample(words, k=size))
+    best_ordered_sample = median_first_order(sorted_sample)
+
+    # Insert benchmark for best case (averaged)
+    best_insert_times[size] = 0.0
+    for _ in range(nr_runs):
+        tst_best = TernarySearchTree()
+        start_time = time.time_ns()
+        for word in best_ordered_sample:
+            tst_best.insert(word)
+        end_time = time.time_ns()
+        best_insert_times[size] += (end_time - start_time)
+    best_insert_times[size] /= nr_runs * 1_000_000.0  # Convert to ms
+
+    # Search benchmark for best case
+    best_search_times[size] = 0.0
+    tst_best = TernarySearchTree()
+    for word in best_ordered_sample:
+        tst_best.insert(word)
+    for _ in range(nr_runs):
+        search_words = random.sample(best_ordered_sample, k=20)
+        start = time.time_ns()
+        for word in search_words:
+            tst_best.search(word)
+        end = time.time_ns()
+        best_search_times[size] += (end - start)
+    best_search_times[size] /= nr_runs * 1_000_000.0
+
+    # --- WORST CASE: Insert sorted order (degenerated to linked list) ---
+    worst_ordered_sample = sorted(random.sample(words, k=size))
+
+    # Insert benchmark for worst case (averaged)
+    worst_insert_times[size] = 0.0
+    for _ in range(nr_runs):
+        tst_worst = TernarySearchTree()
+        start_time = time.time_ns()
+        for word in worst_ordered_sample:
+            tst_worst.insert(word)
+        end_time = time.time_ns()
+        worst_insert_times[size] += (end_time - start_time)
+    worst_insert_times[size] /= nr_runs * 1_000_000.0  # Convert to ms
+
+    # Search benchmark for worst case
+    worst_search_times[size] = 0.0
+    tst_worst = TernarySearchTree()
+    for word in worst_ordered_sample:
+        tst_worst.insert(word)
+    for _ in range(nr_runs):
+        search_words = random.sample(worst_ordered_sample, k=20)
+        start = time.time_ns()
+        for word in search_words:
+            tst_worst.search(word)
+        end = time.time_ns()
+        worst_search_times[size] += (end - start)
+    worst_search_times[size] /= nr_runs * 1_000_000.0
+
+# -------------------------------
+# PLOT: INSERTION TIME COMPARISON
+# -------------------------------
+plt.figure()
+plt.plot(sizes, [insert_times[s] for s in sizes], label='Average Case', marker='o')
+plt.plot(sizes, [best_insert_times[s] for s in sizes], label='Best Case', marker='^')
+plt.plot(sizes, [worst_insert_times[s] for s in sizes], label='Worst Case', marker='s')
+plt.title("TST Insert Time: Best vs Average vs Worst")
+plt.xlabel("Number of words")
+plt.ylabel("Insert Time (ms)")
+plt.legend()
+plt.grid(True)
+plt.savefig("results/insert_cases_comparison.png")
+
+# -------------------------------
+# PLOT: SEARCH TIME COMPARISON
+# -------------------------------
+plt.figure()
+plt.plot(sizes, [search_times[s] for s in sizes], label='Average Case', marker='o')
+plt.plot(sizes, [best_search_times[s] for s in sizes], label='Best Case', marker='^')
+plt.plot(sizes, [worst_search_times[s] for s in sizes], label='Worst Case', marker='s')
+plt.title("TST Search Time: Best vs Average vs Worst")
+plt.xlabel("Number of words")
+plt.ylabel("Search Time (ms)")
+plt.legend()
+plt.grid(True)
+plt.savefig("results/search_cases_comparison.png")
 
 """
 ------------------------------------------------------------------------------------------
